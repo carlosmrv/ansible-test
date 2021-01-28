@@ -1,0 +1,13 @@
+---
+- name: install_software
+  hosts: all
+#  become: yes
+  roles:
+    - role: github_commit
+#    - role: another-role
+#      when: pc_type != 'bat'
+#      tags:
+#        - make
+#  environment:
+#     http_proxy: '{{ proxy_server }}'
+#     https_proxy: '{{ proxy_server }}'

@@ -1,0 +1,39 @@
+---
+# tasks file for roles/github_commit
+
+- name: Read-write git checkout from github
+  git:
+    repo: '{{ repository_url }}'
+    dest: "{{ app_directory }}"
+    version: "{{ version_repo }}"
+    force: yes
+
+- name: Touch a file, using symbolic modes to set the permissions (equivalent to 0644)
+  ansible.builtin.file:
+    path: "{{ app_directory }}/{{ file_name }}"
+    state: touch
+
+- name: Write commit Mesage to repository
+  ansible.builtin.lineinfile:
+    path: "{{ app_directory }}/{{ file_name }}"
+    regexp: '{{ commit_message }}'
+    line: "{{ commit_message }}"
+  register: commit_added
+
+- name: Disable supervisor services
+  shell:
+    cmd: git add .
+    chdir: "{{ app_directory }}/"
+  when: commit_added.changed
+
+- name: Disable supervisor services
+  shell:
+    cmd: git commit -m '{{ commit_message }}'
+    chdir: "{{ app_directory }}/"
+  when: commit_added.changed
+
+- name: Disable supervisor services
+  shell:
+    cmd: git  push
+    chdir: "{{ app_directory }}/"
+  when: commit_added.changed
